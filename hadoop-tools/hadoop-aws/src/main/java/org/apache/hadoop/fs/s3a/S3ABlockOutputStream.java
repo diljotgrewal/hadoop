@@ -147,6 +147,8 @@ class S3ABlockOutputStream extends OutputStream implements
    */
   private static final Duration TIME_TO_AWAIT_CANCEL_COMPLETION = Duration.ofSeconds(15);
 
+  public static final String IF_NONE_MATCH_HEADER = "If-None-Match";
+
   /** Object being uploaded. */
   private final String key;
 
@@ -696,6 +698,16 @@ class S3ABlockOutputStream extends OutputStream implements
             uploadData.getSize(),
             builder.putOptions);
     clearActiveBlock();
+
+    PutObjectRequest.Builder maybeModifiedPutIfAbsentRequest = putObjectRequest.toBuilder();
+    Map<String, String> optionHeaders = builder.putOptions.getHeaders();
+
+    if (optionHeaders != null && optionHeaders.containsKey(IF_NONE_MATCH_HEADER)) {
+        maybeModifiedPutIfAbsentRequest.overrideConfiguration(
+            override -> override.putHeader(IF_NONE_MATCH_HEADER, optionHeaders.get(IF_NONE_MATCH_HEADER)));
+    }
+
+    final PutObjectRequest finalizedRequest = maybeModifiedPutIfAbsentRequest.build();
 
     BlockUploadProgress progressCallback =
         new BlockUploadProgress(block, progressListener, now());
