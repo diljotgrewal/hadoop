@@ -173,7 +173,8 @@ public interface RequestFactory {
   CompleteMultipartUploadRequest.Builder newCompleteMultipartUploadRequestBuilder(
       String destKey,
       String uploadId,
-      List<CompletedPart> partETags);
+      List<CompletedPart> partETags,
+      PutObjectOptions putOptions);
 
   /**
    * Create a HEAD object request builder.

@@ -85,6 +85,8 @@ import static org.apache.hadoop.fs.statistics.impl.IOStatisticsBinding.trackDura
 import static org.apache.hadoop.io.IOUtils.cleanupWithLogger;
 import static org.apache.hadoop.util.functional.FutureIO.awaitAllFutures;
 import static org.apache.hadoop.util.functional.FutureIO.cancelAllFuturesAndAwaitCompletion;
+import org.apache.hadoop.fs.s3a.impl.AWSHeaders;
+
 
 /**
  * Upload files/parts directly via different buffering mechanisms:
@@ -696,6 +698,16 @@ class S3ABlockOutputStream extends OutputStream implements
             uploadData.getSize(),
             builder.putOptions);
     clearActiveBlock();
+
+    PutObjectRequest.Builder maybeModifiedPutIfAbsentRequest = putObjectRequest.toBuilder();
+    Map<String, String> optionHeaders = builder.putOptions.getHeaders();
+
+    if (optionHeaders != null && optionHeaders.containsKey(AWSHeaders.IF_NONE_MATCH)) {
+        maybeModifiedPutIfAbsentRequest.overrideConfiguration(
+            override -> override.putHeader(AWSHeaders.IF_NONE_MATCH, optionHeaders.get(AWSHeaders.IF_NONE_MATCH)));
+    }
+
+    final PutObjectRequest finalizedRequest = maybeModifiedPutIfAbsentRequest.build();
 
     BlockUploadProgress progressCallback =
         new BlockUploadProgress(block, progressListener, now());
