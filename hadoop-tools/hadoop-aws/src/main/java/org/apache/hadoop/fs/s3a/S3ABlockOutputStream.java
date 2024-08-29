@@ -615,8 +615,7 @@ class S3ABlockOutputStream extends OutputStream implements
     Map<String, String> optionHeaders = builder.putOptions.getHeaders();
 
     if (optionHeaders != null && optionHeaders.containsKey(IF_NONE_MATCH_HEADER)) {
-        maybeModifiedPutIfAbsentRequest.overrideConfiguration(
-            override -> override.putHeader(IF_NONE_MATCH_HEADER, optionHeaders.get(IF_NONE_MATCH_HEADER)));
+        maybeModifiedPutIfAbsentRequest.ifNoneMatch("*");
     }
 
     final PutObjectRequest finalizedRequest = maybeModifiedPutIfAbsentRequest.build();

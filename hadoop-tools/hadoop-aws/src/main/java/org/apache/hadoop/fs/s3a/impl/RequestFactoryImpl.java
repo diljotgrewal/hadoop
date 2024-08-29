@@ -529,8 +529,7 @@ public class RequestFactoryImpl implements RequestFactory {
     requestBuilder = CompleteMultipartUploadRequest.builder().bucket(bucket).key(destKey).uploadId(uploadId)
         .multipartUpload(CompletedMultipartUpload.builder().parts(partETags).build());
     if (optionHeaders != null && optionHeaders.containsKey("If-None-Match")) {
-        requestBuilder = CompleteMultipartUploadRequest.builder()
-            .overrideConfiguration(override ->override.putHeader("If-None-Match", optionHeaders.get("If-None-Match"));
+        requestBuilder = CompleteMultipartUploadRequest.builder().ifNoneMatch("*");
     }
 
     return prepareRequest(requestBuilder);
