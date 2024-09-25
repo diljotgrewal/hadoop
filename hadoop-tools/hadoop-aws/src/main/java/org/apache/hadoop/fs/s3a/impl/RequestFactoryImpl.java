@@ -529,13 +529,12 @@ public class RequestFactoryImpl implements RequestFactory {
     CompleteMultipartUploadRequest.Builder requestBuilder;
     Map<String, String> optionHeaders = putOptions.getHeaders();
 
+    requestBuilder = CompleteMultipartUploadRequest.builder().bucket(bucket).key(destKey).uploadId(uploadId)
+            .multipartUpload(CompletedMultipartUpload.builder().parts(partETags).build());
+
     if (optionHeaders != null && optionHeaders.containsKey(AWSHeaders.IF_NONE_MATCH)) {
-        requestBuilder = CompleteMultipartUploadRequest.builder().bucket(bucket).key(destKey).uploadId(uploadId)
-            .overrideConfiguration(override ->override.putHeader(AWSHeaders.IF_NONE_MATCH, optionHeaders.get(AWSHeaders.IF_NONE_MATCH)))
-            .multipartUpload(CompletedMultipartUpload.builder().parts(partETags).build());
-    } else {
-        requestBuilder = CompleteMultipartUploadRequest.builder().bucket(bucket).key(destKey).uploadId(uploadId)
-            .multipartUpload(CompletedMultipartUpload.builder().parts(partETags).build());
+      requestBuilder = CompleteMultipartUploadRequest.builder().overrideConfiguration(
+              override ->override.putHeader(AWSHeaders.IF_NONE_MATCH, optionHeaders.get(AWSHeaders.IF_NONE_MATCH)));
     }
 
     return prepareRequest(requestBuilder);
