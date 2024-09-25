@@ -85,6 +85,8 @@ import static org.apache.hadoop.fs.statistics.impl.IOStatisticsBinding.trackDura
 import static org.apache.hadoop.io.IOUtils.cleanupWithLogger;
 import static org.apache.hadoop.util.functional.FutureIO.awaitAllFutures;
 import static org.apache.hadoop.util.functional.FutureIO.cancelAllFuturesAndAwaitCompletion;
+import org.apache.hadoop.fs.s3a.impl.AWSHeaders;
+
 
 /**
  * Upload files/parts directly via different buffering mechanisms:
@@ -146,8 +148,6 @@ class S3ABlockOutputStream extends OutputStream implements
    * the blocks themselves are closed: 15 seconds.
    */
   private static final Duration TIME_TO_AWAIT_CANCEL_COMPLETION = Duration.ofSeconds(15);
-
-  public static final String IF_NONE_MATCH_HEADER = "If-None-Match";
 
   /** Object being uploaded. */
   private final String key;
@@ -702,9 +702,9 @@ class S3ABlockOutputStream extends OutputStream implements
     PutObjectRequest.Builder maybeModifiedPutIfAbsentRequest = putObjectRequest.toBuilder();
     Map<String, String> optionHeaders = builder.putOptions.getHeaders();
 
-    if (optionHeaders != null && optionHeaders.containsKey(IF_NONE_MATCH_HEADER)) {
+    if (optionHeaders != null && optionHeaders.containsKey(AWSHeaders.IF_NONE_MATCH)) {
         maybeModifiedPutIfAbsentRequest.overrideConfiguration(
-            override -> override.putHeader(IF_NONE_MATCH_HEADER, optionHeaders.get(IF_NONE_MATCH_HEADER)));
+            override -> override.putHeader(AWSHeaders.IF_NONE_MATCH, optionHeaders.get(AWSHeaders.IF_NONE_MATCH)));
     }
 
     final PutObjectRequest finalizedRequest = maybeModifiedPutIfAbsentRequest.build();

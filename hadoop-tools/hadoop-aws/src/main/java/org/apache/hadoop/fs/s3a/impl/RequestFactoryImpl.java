@@ -66,6 +66,9 @@ import static org.apache.hadoop.util.Preconditions.checkArgument;
 import static org.apache.hadoop.util.Preconditions.checkNotNull;
 import static software.amazon.awssdk.services.s3.model.StorageClass.UNKNOWN_TO_SDK_VERSION;
 
+import org.apache.hadoop.fs.s3a.impl.AWSHeaders;
+
+
 /**
  * The standard implementation of the request factory.
  * This creates AWS SDK request classes for the specific bucket,
@@ -526,9 +529,9 @@ public class RequestFactoryImpl implements RequestFactory {
     CompleteMultipartUploadRequest.Builder requestBuilder;
     Map<String, String> optionHeaders = putOptions.getHeaders();
 
-    if (optionHeaders != null && optionHeaders.containsKey("If-None-Match")) {
+    if (optionHeaders != null && optionHeaders.containsKey(AWSHeaders.IF_NONE_MATCH)) {
         requestBuilder = CompleteMultipartUploadRequest.builder().bucket(bucket).key(destKey).uploadId(uploadId)
-            .overrideConfiguration(override ->override.putHeader("If-None-Match", optionHeaders.get("If-None-Match")))
+            .overrideConfiguration(override ->override.putHeader(AWSHeaders.IF_NONE_MATCH, optionHeaders.get(AWSHeaders.IF_NONE_MATCH)))
             .multipartUpload(CompletedMultipartUpload.builder().parts(partETags).build());
     } else {
         requestBuilder = CompleteMultipartUploadRequest.builder().bucket(bucket).key(destKey).uploadId(uploadId)
