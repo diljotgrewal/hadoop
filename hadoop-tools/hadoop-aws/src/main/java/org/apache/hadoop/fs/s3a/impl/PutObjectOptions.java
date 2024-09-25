@@ -32,6 +32,12 @@ public final class PutObjectOptions {
   private final boolean keepMarkers;
 
   /**
+   * Is this a conditional PUT operation
+   */
+  private final boolean conditionalPut;
+
+
+  /**
    * Storage class, if not null.
    */
   private final String storageClass;
@@ -44,14 +50,17 @@ public final class PutObjectOptions {
   /**
    * Constructor.
    * @param keepMarkers Can the PUT operation skip marker deletion?
+   * @param conditionalPut Is this a conditional Put?
    * @param storageClass Storage class, if not null.
    * @param headers Headers; may be null.
    */
   public PutObjectOptions(
       final boolean keepMarkers,
+      final boolean conditionalPut,
       @Nullable final String storageClass,
       @Nullable final Map<String, String> headers) {
     this.keepMarkers = keepMarkers;
+    this.conditionalPut = conditionalPut;
     this.storageClass = storageClass;
     this.headers = headers;
   }
@@ -63,6 +72,15 @@ public final class PutObjectOptions {
   public boolean isKeepMarkers() {
     return keepMarkers;
   }
+
+  /**
+   * Get the conditional put flag.
+   * @return true if it's a conditional put
+   */
+  public boolean isConditionalPut() {
+    return conditionalPut;
+  }
+
 
   /**
    * Headers for the put/post request.
@@ -80,9 +98,9 @@ public final class PutObjectOptions {
         '}';
   }
 
-  private static final PutObjectOptions KEEP_DIRS = new PutObjectOptions(true,
+  private static final PutObjectOptions KEEP_DIRS = new PutObjectOptions(true, false,
       null, null);
-  private static final PutObjectOptions DELETE_DIRS = new PutObjectOptions(false,
+  private static final PutObjectOptions DELETE_DIRS = new PutObjectOptions(false, false,
       null, null);
 
   /**

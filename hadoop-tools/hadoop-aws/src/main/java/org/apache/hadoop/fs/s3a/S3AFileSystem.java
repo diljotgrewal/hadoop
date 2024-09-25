@@ -2187,7 +2187,7 @@ public class S3AFileSystem extends FileSystem implements StreamCapabilities,
     // option builder.
     boolean keep = options.isPerformance() || keepDirectoryMarkers(path);
     final PutObjectOptions putOptions =
-        new PutObjectOptions(keep, null, options.getHeaders());
+        new PutObjectOptions(keep, false, null, options.getHeaders());
 
     validateOutputStreamConfiguration(path, getConf());
 
