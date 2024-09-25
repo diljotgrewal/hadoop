@@ -19,7 +19,7 @@ import java.io.IOException;
 import static org.apache.hadoop.fs.contract.ContractTestUtils.dataset;
 import static org.apache.hadoop.fs.s3a.Constants.FAST_UPLOAD_BUFFER;
 import static org.apache.hadoop.fs.s3a.Constants.FAST_UPLOAD_BUFFER_ARRAY;
-import static org.apache.hadoop.fs.s3a.Constants.FS_S3A_CREATE_IF_NONE_MATCH;
+import static org.apache.hadoop.fs.s3a.Constants.FS_S3A_CONDITIONAL_FILE_CREATE;
 import static org.apache.hadoop.fs.s3a.Constants.MIN_MULTIPART_THRESHOLD;
 import static org.apache.hadoop.fs.s3a.Constants.MULTIPART_MIN_SIZE;
 import static org.apache.hadoop.fs.s3a.Constants.MULTIPART_SIZE;
@@ -53,7 +53,7 @@ public class ITestS3APutIfMatch extends AbstractS3ACostTest {
     public void setup() throws Exception {
         super.setup();
         conf = createConfiguration();
-        skipIfNotEnabled(conf, FS_S3A_CREATE_IF_NONE_MATCH,
+        skipIfNotEnabled(conf, FS_S3A_CONDITIONAL_FILE_CREATE,
                 "Skipping IfNoneMatch tests");
     }
 
@@ -73,7 +73,7 @@ public class ITestS3APutIfMatch extends AbstractS3ACostTest {
                                                       byte[] data,
                                                       String ifMatchTag) throws Exception {
           FSDataOutputStreamBuilder builder = fs.createFile(path);
-          builder.must(FS_S3A_CREATE_IF_NONE_MATCH, ifMatchTag);
+          builder.must(FS_S3A_CONDITIONAL_FILE_CREATE, ifMatchTag);
           FSDataOutputStream stream = builder.create().build();
           if (data != null && data.length > 0) {
               stream.write(data);
