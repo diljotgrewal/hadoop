@@ -168,6 +168,7 @@ public interface RequestFactory {
    * @param destKey destination object key
    * @param uploadId ID of initiated upload
    * @param partETags ordered list of etags
+   * @param putOptions options for the request
    * @return the request builder.
    */
   CompleteMultipartUploadRequest.Builder newCompleteMultipartUploadRequestBuilder(

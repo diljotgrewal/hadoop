@@ -715,7 +715,7 @@ class S3ABlockOutputStream extends OutputStream implements
     try {
       progressCallback.progressChanged(PUT_STARTED_EVENT);
       // the putObject call automatically closes the upload data
-      writeOperationHelper.putObject(putObjectRequest,
+      writeOperationHelper.putObject(finalizedRequest,
           builder.putOptions,
           uploadData,
           statistics);
@@ -1401,6 +1401,11 @@ class S3ABlockOutputStream extends OutputStream implements
      */
     private boolean isMultipartUploadEnabled;
 
+    /**
+     * Is conditional create enables.
+     */
+    private boolean isConditionalEnabled;
+
     private BlockOutputStreamBuilder() {
     }
 
@@ -1560,6 +1565,12 @@ class S3ABlockOutputStream extends OutputStream implements
     public BlockOutputStreamBuilder withMultipartEnabled(
         final boolean value) {
       isMultipartUploadEnabled = value;
+      return this;
+    }
+
+    public BlockOutputStreamBuilder withConditionalEnabled(
+            final boolean value){
+      isConditionalEnabled = value;
       return this;
     }
   }
